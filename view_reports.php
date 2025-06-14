@@ -18,7 +18,7 @@ $res = $conn->query($q);
 <table border=1>
   <tr><th>ID</th><th>By</th><th>Title</th><th>Description</th><th>Location</th>
       <th>Status</th><th>Status Details</th><th>Image</th><th>Submitted</th></tr>
- <th>Status</th><th>Status Details</th><th>Video</th><th>Video</th></tr>
+
 
 <?php while($r = $res->fetch_assoc()): ?>
   <tr>
