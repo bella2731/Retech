@@ -1,4 +1,3 @@
-
 <?php 
 session_start(); 
 $active = 'report_form'; 
@@ -111,6 +110,24 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'staff') {
             font-size: 0.85rem;
             padding: 6px 12px;
         }
+
+        .description-container {
+            position: relative;
+        }
+
+       #speakBtn {
+            position: absolute;
+            right: 5px;
+            top: 80%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 30px;
+        }
+
+
+        
     </style>
 </head>
 <body>
@@ -129,7 +146,10 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'staff') {
 
       <div class="mb-3">
         <label class="form-label">Issue Description:</label>
-        <textarea name="description" class="form-control" rows="4" required></textarea>
+        <div class="description-container">
+          <textarea name="description" id="textInput" class="form-control" rows="4" required></textarea>
+          <button type="button" id="speakBtn" title="Click to start/stop speech recognition">🎙</button>
+        </div>
       </div>
 
       <div class="mb-3">
@@ -157,6 +177,69 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'staff') {
     <!-- ✅ FORM ENDS HERE -->
 
   </div>
+
+ <script>
+        const speakBtn = document.getElementById('speakBtn');
+        const textInput = document.getElementById('textInput');
+
+        // Check browser support
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let isRecording = false;
+
+        if (SpeechRecognition) {
+            const recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'en-US';
+
+            speakBtn.addEventListener('click', (e) => {
+                e.preventDefault(); // Prevent form submission
+                
+                if (!isRecording) {
+                    recognition.start();
+                    speakBtn.classList.add('recording');
+                    speakBtn.title = 'Recording... Click to stop';
+                    isRecording = true;
+                } else {
+                    recognition.stop();
+                    speakBtn.classList.remove('recording');
+                    speakBtn.title = 'Click to start speech recognition';
+                    isRecording = false;
+                }
+            });
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                // Append to existing text instead of replacing
+                if (textInput.value.trim()) {
+                    textInput.value += ' ' + transcript;
+                } else {
+                    textInput.value = transcript;
+                }
+                speakBtn.classList.remove('recording');
+                speakBtn.title = 'Click to start speech recognition';
+                isRecording = false;
+            };
+
+            recognition.onend = () => {
+                speakBtn.classList.remove('recording');
+                speakBtn.title = 'Click to start speech recognition';
+                isRecording = false;
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Speech recognition error:', event.error);
+                alert('Error occurred in speech recognition: ' + event.error);
+                speakBtn.classList.remove('recording');
+                speakBtn.title = 'Click to start speech recognition';
+                isRecording = false;
+            };
+        } else {
+            speakBtn.disabled = true;
+            speakBtn.title = 'Speech recognition not supported';
+            speakBtn.style.opacity = '0.5';
+        }
+    </script>
 
 </body>
 </html>
