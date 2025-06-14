@@ -10,6 +10,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'staff') {
 $user_id = $_SESSION['user_id'];
 $username = $_SESSION['username'] ?? 'Staff Member';
 
+// Updated SQL to get media type as well
 $sql = "
  SELECT  r.report_id, r.title, r.description, r.location,
          r.urgency_level, r.status, r.report_date,
@@ -17,7 +18,12 @@ $sql = "
            WHERE m.report_id = r.report_id
            ORDER BY m.media_id ASC
            LIMIT 1
-         ) AS evidence
+         ) AS evidence,
+         ( SELECT media_type FROM MEDIA m
+           WHERE m.report_id = r.report_id
+           ORDER BY m.media_id ASC
+           LIMIT 1
+         ) AS media_type
  FROM REPORTS r
  WHERE r.user_id = ?
  ORDER BY r.report_date DESC
@@ -134,6 +140,13 @@ $active = 'dashboard';
             box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
         }
 
+        .report-video {
+            max-width: 140px;
+            max-height: 100px;
+            border-radius: 6px;
+            box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+        }
+
         .table-responsive {
             max-height: 600px;
             overflow-y: auto;
@@ -149,6 +162,39 @@ $active = 'dashboard';
         .badge {
             font-size: 0.85rem;
             padding: 6px 12px;
+        }
+
+        .media-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .media-type-badge {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 10px;
+            text-transform: uppercase;
+        }
+
+        .fullscreen-modal .modal-dialog {
+            max-width: 90vw;
+            max-height: 90vh;
+        }
+
+        .fullscreen-modal .modal-content {
+            height: 80vh;
+        }
+
+        .fullscreen-modal img,
+        .fullscreen-modal video {
+            max-width: 100%;
+            max-height: 70vh;
+            object-fit: contain;
         }
     </style>
     <?php include 'styles.php'; ?>
@@ -212,9 +258,57 @@ $active = 'dashboard';
                                 <td><?= htmlspecialchars($row['urgency_level']) ?></td>
                                 <td>
                                     <?php if ($row['evidence'] && file_exists($row['evidence'])): ?>
-                                        <img src="<?= htmlspecialchars($row['evidence']) ?>" class="report-image" alt="Evidence">
+                                        <div class="media-container">
+                                            <?php if ($row['media_type'] === 'video'): ?>
+                                                <video class="report-video" controls preload="metadata" 
+                                                       data-bs-toggle="modal" data-bs-target="#mediaModal<?= $row['report_id'] ?>"
+                                                       style="cursor: pointer;">
+                                                    <source src="<?= htmlspecialchars($row['evidence']) ?>" type="video/mp4">
+                                                    Your browser does not support the video tag.
+                                                </video>
+                                                <span class="media-type-badge">VIDEO</span>
+                                            <?php else: ?>
+                                                <img src="<?= htmlspecialchars($row['evidence']) ?>" 
+                                                     class="report-image" alt="Evidence"
+                                                     data-bs-toggle="modal" data-bs-target="#mediaModal<?= $row['report_id'] ?>"
+                                                     style="cursor: pointer;">
+                                                <span class="media-type-badge">IMAGE</span>
+                                            <?php endif; ?>
+                                        </div>
+
+                                        <!-- Modal for fullscreen view -->
+                                        <div class="modal fade fullscreen-modal" id="mediaModal<?= $row['report_id'] ?>" tabindex="-1">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">Evidence - <?= htmlspecialchars($row['title']) ?></h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <div class="modal-body text-center">
+                                                        <?php if ($row['media_type'] === 'video'): ?>
+                                                            <video controls class="w-100">
+                                                                <source src="<?= htmlspecialchars($row['evidence']) ?>" type="video/mp4">
+                                                                Your browser does not support the video tag.
+                                                            </video>
+                                                        <?php else: ?>
+                                                            <img src="<?= htmlspecialchars($row['evidence']) ?>" 
+                                                                 class="img-fluid" alt="Evidence">
+                                                        <?php endif; ?>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <a href="<?= htmlspecialchars($row['evidence']) ?>" 
+                                                           class="btn btn-primary" download>
+                                                            📥 Download
+                                                        </a>
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                            Close
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     <?php else: ?>
-                                        <span class="text-muted">No image</span>
+                                        <span class="text-muted">No media</span>
                                     <?php endif; ?>
                                 </td>
                                 <td>
@@ -243,6 +337,21 @@ $active = 'dashboard';
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Pause all videos when modal is closed
+        document.addEventListener('DOMContentLoaded', function() {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(function(modal) {
+                modal.addEventListener('hidden.bs.modal', function() {
+                    const videos = modal.querySelectorAll('video');
+                    videos.forEach(function(video) {
+                        video.pause();
+                    });
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>
