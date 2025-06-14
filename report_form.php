@@ -126,13 +126,25 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'staff') {
             font-size: 30px;
         }
 
-
-        
+        .file-info {
+            margin-top: 10px;
+            padding: 8px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #666;
+        }
     </style>
 </head>
 <body>
 
-  <?php include 'sidebar.php'; ?>
+  <!-- Sidebar placeholder -->
+  <div class="sidebar">
+    <h3>Navigation</h3>
+    <a href="#" class="active">Report Issue</a>
+    <a href="#">View Reports</a>
+    <a href="#">Dashboard</a>
+  </div>
 
   <div class="content">
     <h2 class="mb-4">Report a Maintenance Issue</h2>
@@ -168,8 +180,12 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'staff') {
       </div>
 
       <div class="mb-3">
-        <label class="form-label">Upload Evidence (Image only):</label>
-        <input type="file" name="evidence" class="form-control" accept="image/*" required>
+        <label class="form-label">Upload Evidence (Image or Video):</label>
+        <input type="file" name="evidence" id="evidenceFile" class="form-control" 
+               accept="image/*,video/*" required>
+        <div class="file-info">
+          <small>Supported formats: Images (JPG, PNG, GIF, WebP) and Videos (MP4, MOV, AVI, WebM). Max size: 50MB</small>
+        </div>
       </div>
 
       <button type="submit" class="btn btn-success">Submit Report</button>
@@ -181,6 +197,28 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'staff') {
  <script>
         const speakBtn = document.getElementById('speakBtn');
         const textInput = document.getElementById('textInput');
+        const evidenceFile = document.getElementById('evidenceFile');
+
+        // File size validation
+        evidenceFile.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const maxSize = 50 * 1024 * 1024; // 50MB in bytes
+                if (file.size > maxSize) {
+                    alert('File size exceeds 50MB limit. Please choose a smaller file.');
+                    this.value = '';
+                    return;
+                }
+                
+                // Show file info
+                const fileInfo = document.querySelector('.file-info');
+                const fileSize = (file.size / (1024 * 1024)).toFixed(2);
+                fileInfo.innerHTML = `
+                    <small>Selected: ${file.name} (${fileSize} MB)</small><br>
+                    <small>Supported formats: Images (JPG, PNG, GIF, WebP) and Videos (MP4, MOV, AVI, WebM). Max size: 50MB</small>
+                `;
+            }
+        });
 
         // Check browser support
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
