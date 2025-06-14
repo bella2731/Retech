@@ -138,13 +138,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'staff') {
 </head>
 <body>
 
-  <!-- Sidebar placeholder -->
-  <div class="sidebar">
-    <h3>Navigation</h3>
-    <a href="#" class="active">Report Issue</a>
-    <a href="#">View Reports</a>
-    <a href="#">Dashboard</a>
-  </div>
+  <?php include 'sidebar.php'; ?>
 
   <div class="content">
     <h2 class="mb-4">Report a Maintenance Issue</h2>
