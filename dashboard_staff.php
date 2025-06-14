@@ -43,6 +43,7 @@ $countResult = $countStmt->get_result();
 $countData = $countResult->fetch_assoc();
 
 $active = 'dashboard';
+
 ?>
 <!DOCTYPE html>
 <html lang="en">

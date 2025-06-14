@@ -76,17 +76,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $med->execute();
         }
 
-        // Insert log
+        $detail = "Report #$report_id edited by staff user ID $user_id";
+
         $log = $conn->prepare("
     INSERT INTO LOGS (report_id, user_id, detail, created_at)
     VALUES (?, ?, ?, NOW())
 ");
-        $log->bind_param("ii", $report_id, $user_id);
+        $log->bind_param("iis", $report_id, $user_id, $detail); // "iis" means: int, int, string
         $log->execute();
 
 
+
         // Redirect to dashboard
-        header("Location: staff_dashboard.php?updated=1");
+        header("Location: dashboard_staff.php?updated=1");
         exit;
     }
 }

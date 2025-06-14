@@ -104,12 +104,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <li class="list-group-item">
                             <strong>Created At:</strong>
                             <?php
-                    if (!empty($report['report_date'])) {
-                        echo date("d M Y, h:i A", strtotime($report['report_date']));
-                    } else {
-                        echo '<span class="text-muted">N/A</span>';
-                    }
-                    ?>
+                            if (!empty($report['report_date'])) {
+                                echo date("d M Y, h:i A", strtotime($report['report_date']));
+                            } else {
+                                echo '<span class="text-muted">N/A</span>';
+                            }
+                            ?>
                         </li>
                     </ul>
                 </div>
@@ -135,6 +135,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             placeholder="Add explanation or remarks..."></textarea>
                     </div>
                     <button type="submit" class="btn btn-success">✅ Update Status</button>
+
+                    <a href="report_history.php?id=<?= $report['report_id'] ?>" class="btn btn-info btn-sm">
+                        🕒 View Status History
+                    </a>
+
                 </form>
 
             </div>
