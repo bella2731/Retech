@@ -81,6 +81,14 @@ $logs_result = $logs_stmt->get_result();
                         </tbody>
                     </table>
                 </div>
+
+<?php if ($role === 'admin'): ?>
+                <!-- If the user is an admin, show the Report History link -->
+                <a href="view_reports.php" class="btn btn-primary mb-4">📜 View Report History</a>
+            <?php elseif ($role === 'staff'): ?>
+                <!-- If the user is staff, show the Upload Report Form link -->
+                <a href="report_form.php" class="btn btn-primary mb-4">📋 Upload Report Form</a>
+            <?php endif; ?>
             <?php else: ?>
                 <div class="alert alert-warning">No log entries found for this report.</div>
             <?php endif; ?>
