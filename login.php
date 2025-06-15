@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['username'] = $username;
             $_SESSION['role'] = $role;
 
-            header("Location: " . ($role === 'admin' ? 'view_reports.php' : 'dashboard_staff.php'));
+            header("Location: " . ($role === 'admin' ? 'dashboardadmin.php' : 'dashboard_staff.php'));
             exit;
         }
     }
