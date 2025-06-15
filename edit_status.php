@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <body class="bg-light">
     <div class="container py-5">
-        <a href="dashboard_staff.php" class="btn btn-secondary mb-4">&larr; Back</a>
+       <a href="<?= ($_SESSION['role'] === 'staff') ? 'dashboard_staff.php' : 'dashboardadmin.php' ?>" class="btn btn-secondary mb-4">&larr; Back</a>
 
         <div class="card">
             <div class="card-header bg-primary text-white">
