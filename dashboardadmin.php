@@ -20,9 +20,10 @@ $sql = "
            LIMIT 1
          ) AS evidence
  FROM REPORTS r
- JOIN USERS u ON r.user_id = u.user_id
+ JOIN USERS u ON r.user_id = u.id
  ORDER BY r.report_date DESC
 ";
+
 $result = $conn->query($sql);
 
 // Kira jumlah laporan
