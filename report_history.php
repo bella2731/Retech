@@ -9,6 +9,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'staff') {
 
 $user_id = $_SESSION['user_id'];
 $username = $_SESSION['username'] ?? 'Staff';
+$role = $_SESSION['role']; // ✅ Add this line
 
 // 1. Get report ID from URL
 $report_id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
