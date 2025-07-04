@@ -13,21 +13,18 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'staff') {
     exit;
 }
 
-$user_id  = $_SESSION['user_id'];
 $username = $_SESSION['username'] ?? 'Staff Member';
 
-/* ───────────────── FETCH REPORTS ───────────────── */
+/* ───────────────── FETCH ALL REPORTS ───────────────── */
 $sql = "
  SELECT r.report_id, r.title, r.location,
         r.urgency_level, r.status, r.report_date,
         (SELECT file_path  FROM media m WHERE m.report_id = r.report_id ORDER BY m.media_id ASC LIMIT 1) AS evidence,
         (SELECT media_type FROM media m WHERE m.report_id = r.report_id ORDER BY m.media_id ASC LIMIT 1) AS media_type
  FROM reports r
- WHERE r.user_id = ?
  ORDER BY r.report_date DESC
 ";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
 ?>
@@ -35,7 +32,7 @@ $result = $stmt->get_result();
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Report Details</title>
+    <title>All Reports</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <?php include 'styles.php'; ?>
@@ -53,7 +50,7 @@ $result = $stmt->get_result();
 <div class="content">
 
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="mb-4">📝 Your Report Details</h2>
+        <h2 class="mb-4">📝 All Maintenance Reports</h2>
         <a href="report_form.php" class="btn btn-success">➕ Submit New Report</a>
     </div>
 
@@ -65,7 +62,7 @@ $result = $stmt->get_result();
     <?php endif; ?>
 
     <?php if ($result->num_rows === 0): ?>
-        <div class="alert alert-info">You have not submitted any reports yet.</div>
+        <div class="alert alert-info">No reports submitted yet.</div>
     <?php else: ?>
         <div class="table-responsive">
             <table class="table table-hover table-bordered align-middle">
@@ -158,7 +155,7 @@ $result = $stmt->get_result();
     <?php endif; ?>
 </div>
 
-<!-- Delete Confirmation Modal (single reusable) -->
+<!-- Delete Confirmation Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
@@ -182,16 +179,14 @@ $result = $stmt->get_result();
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-/* pass ID into modal */
 document.addEventListener('DOMContentLoaded', () => {
     const deleteModal = document.getElementById('deleteModal');
     deleteModal.addEventListener('show.bs.modal', event => {
-        const button   = event.relatedTarget;           // button that triggered modal
+        const button   = event.relatedTarget;
         const reportId = button.getAttribute('data-report-id');
         deleteModal.querySelector('#deleteReportId').value = reportId;
     });
 
-    /* pause any video previews when modals close */
     document.querySelectorAll('.modal').forEach(m => {
         m.addEventListener('hidden.bs.modal', () => {
             m.querySelectorAll('video').forEach(v => v.pause());

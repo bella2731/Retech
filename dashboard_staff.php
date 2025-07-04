@@ -7,7 +7,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'staff') {
 
 require 'db.php';
 
-$user_id = $_SESSION['user_id'];
 $username = $_SESSION['username'] ?? 'Staff Member';
 
 // --- Summary counts ---
@@ -17,19 +16,16 @@ $countSql = "
         SUM(CASE WHEN status = 'Pending' THEN 1 ELSE 0 END) AS pending,
         SUM(CASE WHEN status = 'In Progress' THEN 1 ELSE 0 END) AS in_progress,
         SUM(CASE WHEN status = 'Completed' THEN 1 ELSE 0 END) AS completed
-    FROM REPORTS
-    WHERE user_id = ?
+    FROM reports
 ";
 $countStmt = $conn->prepare($countSql);
-$countStmt->bind_param("i", $user_id);
 $countStmt->execute();
 $countResult = $countStmt->get_result();
 $countData = $countResult->fetch_assoc();
 
 // --- Chart: Urgency level ---
-$urgencySql = "SELECT urgency_level, COUNT(*) as total FROM reports WHERE user_id = ? GROUP BY urgency_level";
+$urgencySql = "SELECT urgency_level, COUNT(*) as total FROM reports GROUP BY urgency_level";
 $urgencyStmt = $conn->prepare($urgencySql);
-$urgencyStmt->bind_param("i", $user_id);
 $urgencyStmt->execute();
 $urgencyRes = $urgencyStmt->get_result();
 $urgencyData = [];
@@ -41,12 +37,10 @@ while ($row = $urgencyRes->fetch_assoc()) {
 $monthSql = "
     SELECT DATE_FORMAT(report_date, '%b %Y') as month, COUNT(*) as total
     FROM reports
-    WHERE user_id = ?
     GROUP BY month
     ORDER BY MIN(report_date)
 ";
 $monthStmt = $conn->prepare($monthSql);
-$monthStmt->bind_param("i", $user_id);
 $monthStmt->execute();
 $monthRes = $monthStmt->get_result();
 $monthlyLabels = $monthlyCounts = [];
@@ -67,6 +61,29 @@ $active = 'dashboard';
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <?php include 'styles.php'; ?>
+    <style>
+        .summary-cards {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .summary-card {
+            flex: 1;
+            min-width: 200px;
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.05);
+        }
+        .summary-card h6 {
+            font-size: 1rem;
+            color: #666;
+        }
+        .summary-card p {
+            font-size: 1.4rem;
+            font-weight: bold;
+        }
+    </style>
 </head>
 
 <body class="d-flex">
@@ -77,25 +94,24 @@ $active = 'dashboard';
         <h2 class="mb-4">📊 Dashboard Summary</h2>
 
         <!-- 🔢 Quick Summary Cards -->
-        <div class="summary-cards d-flex gap-3 flex-wrap mb-4">
-            <div class="summary-card border-start border-primary">
+        <div class="summary-cards mb-4">
+            <div class="summary-card border-start border-primary border-4">
                 <h6>Total Reports</h6>
-                <p><?= $countData['total'] ?></p>
+                <p><?= $countData['total'] ?? 0 ?></p>
             </div>
-            <div class="summary-card border-start border-warning">
+            <div class="summary-card border-start border-warning border-4">
                 <h6>Pending</h6>
-                <p><?= $countData['pending'] ?></p>
+                <p><?= $countData['pending'] ?? 0 ?></p>
             </div>
-            <div class="summary-card border-start border-info">
+            <div class="summary-card border-start border-info border-4">
                 <h6>In Progress</h6>
-                <p><?= $countData['in_progress'] ?></p>
+                <p><?= $countData['in_progress'] ?? 0 ?></p>
             </div>
-            <div class="summary-card border-start border-success">
+            <div class="summary-card border-start border-success border-4">
                 <h6>Completed</h6>
-                <p><?= $countData['completed'] ?></p>
+                <p><?= $countData['completed'] ?? 0 ?></p>
             </div>
         </div>
-
 
         <!-- 📈 Charts Section -->
         <div class="row">
@@ -119,7 +135,7 @@ $active = 'dashboard';
                 labels: <?= json_encode(array_keys($urgencyData)) ?>,
                 datasets: [{
                     data: <?= json_encode(array_values($urgencyData)) ?>,
-                    backgroundColor: ['#198754', '#ffc107', '#dc3545']
+                    backgroundColor: ['#dc3545', '#ffc107', '#198754', '#0d6efd']
                 }]
             }
         });
@@ -136,7 +152,10 @@ $active = 'dashboard';
             },
             options: {
                 scales: {
-                    y: { beginAtZero: true }
+                    y: {
+                        beginAtZero: true,
+                        ticks: { stepSize: 1 }
+                    }
                 }
             }
         });

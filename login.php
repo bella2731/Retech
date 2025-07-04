@@ -32,6 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <title>Maintenance Report System • Login</title>
@@ -46,70 +47,98 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             background: linear-gradient(to right, #f5f7fa, #c3cfe2);
             font-family: 'Segoe UI', sans-serif;
         }
+
         .login-card {
             width: 100%;
             max-width: 420px;
             background: #ffffff;
             border-radius: 16px;
             padding: 40px 32px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
             animation: slideUp 0.6s ease-out;
         }
+
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(40px); }
-            to   { opacity: 1; transform: translateY(0);   }
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
+
         .login-title {
             font-size: 1.6rem;
             font-weight: 600;
             margin-bottom: 0.25rem;
             color: #008C9E;
         }
+
         .login-subtitle {
             font-size: 0.95rem;
             color: #555;
             margin-bottom: 24px;
         }
+
         .btn-primary {
             border-radius: 10px;
         }
+
         .form-control {
             border-radius: 10px;
         }
+
         .error-msg {
             animation: fade 0.5s ease-in-out;
         }
+
         @keyframes fade {
-            from { opacity: 0; }
-            to   { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
     </style>
 </head>
+
 <body>
 
-<div class="login-card">
-    <!-- Page heading -->
-    <h2 class="login-title text-center">🔧 Maintenance Report System</h2>
-    <p class="login-subtitle text-center">Staff &nbsp;•&nbsp; Admin Portal</p>
+    <div class="login-card">
+        <!-- Page heading -->
+        <h2 class="login-title text-center">🔧 Maintenance Report System</h2>
+        <p class="login-subtitle text-center">Staff &nbsp;•&nbsp; Admin Portal</p>
 
-    <!-- Error alert -->
-    <?php if ($error): ?>
-        <div class="alert alert-danger error-msg"><?= htmlspecialchars($error) ?></div>
-    <?php endif; ?>
+        <!-- Error alert -->
+        <?php if ($error): ?>
+            <div class="alert alert-danger error-msg"><?= htmlspecialchars($error) ?></div>
+        <?php endif; ?>
 
-    <!-- Login form -->
-    <form method="post" autocomplete="off">
-        <div class="mb-3">
-            <label for="username" class="form-label">Username</label>
-            <input id="username" name="username" type="text" class="form-control" placeholder="Enter username" required autofocus>
-        </div>
-        <div class="mb-4">
-            <label for="password" class="form-label">Password</label>
-            <input id="password" name="password" type="password" class="form-control" placeholder="Enter password" required>
-        </div>
-        <button type="submit" class="btn btn-primary w-100 py-2">Login</button>
-    </form>
-</div>
+        <!-- Login form -->
+        <form method="post" autocomplete="off">
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input id="username" name="username" type="text" class="form-control" placeholder="Enter username"
+                    required autofocus>
+            </div>
+            <div class="mb-4">
+                <label for="password" class="form-label">Password</label>
+                <input id="password" name="password" type="password" class="form-control" placeholder="Enter password"
+                    required>
+            </div>
+            <p class="text-center mt-3">
+                Don’t have an account? <a href="register.php">Register here</a>
+            </p>
+
+            <button type="submit" class="btn btn-primary w-100 py-2">Login</button>
+        </form>
+    </div>
 
 </body>
+
 </html>
