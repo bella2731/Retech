@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body class="bg-light">
 
     <div class="container py-5">
-        <a href="dashboard_staff.php" class="btn btn-secondary mb-4">&larr; Back to Dashboard</a>
+        <a href="detailsReport_staff.php" class="btn btn-secondary mb-4">&larr; Back</a>
 
         <div class="card shadow-sm">
             <div class="card-header bg-primary text-white">

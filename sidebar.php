@@ -44,18 +44,22 @@ $active = $active ?? '';
 <div class="sidebar d-flex flex-column">
     <h3>Maintenance<br>Report System</h3>
 
-  
-    <a class="side-link <?= basename($_SERVER['PHP_SELF']) === 'dashboardadmin.php' ? 'active' : '' ?>" href="<?= basename($_SERVER['PHP_SELF']) === 'dashboardadmin.php' ? 'dashboardadmin.php' : 'dashboard_staff.php' ?>">
-    Dashboard
-</a>
 
-    
+    <a class="side-link <?= basename($_SERVER['PHP_SELF']) === 'dashboard_staff.php' ? 'active' : '' ?>"
+        href="dashboard_staff.php">
+        Dashboard
+    </a>
 
-    <a class="side-link <?= basename($_SERVER['PHP_SELF']) === 'report_form.php' ? 'active' : '' ?>" 
-   href="<?= basename($_SERVER['PHP_SELF']) === 'dashboard_staff.php' ? 'report_form.php' : 'report_history.php' ?>">
-    Report Form
-</a>
-    
+    <a class="side-link <?= basename($_SERVER['PHP_SELF']) === 'report_form.php' ? 'active' : '' ?>"
+        href="report_form.php">
+        Report Form
+    </a>
+
+    <a class="side-link <?= basename($_SERVER['PHP_SELF']) === 'detailsReport_staff.php' ? 'active' : '' ?>"
+        href="detailsReport_staff.php">
+        Report Details
+    </a>
+
     <div class="mt-auto p-3">
         <form action="logout.php" method="post">
             <button class="logout-btn">LOGOUT</button>
