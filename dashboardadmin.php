@@ -53,7 +53,7 @@ $active = 'dashboard';
     <?php include 'styles.php'; ?>
 </head>
 <body class="d-flex">
-    <?php include 'sidebar.php'; ?>
+    <?php include 'adminSidebar.php'; ?>
 
     <div class="flex-grow-1 p-4 content">
         <h3 class="mb-4">👋 Welcome, <?= htmlspecialchars($username) ?></h3>
