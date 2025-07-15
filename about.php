@@ -103,11 +103,13 @@
     <header>
         <h1>Meet the Team</h1>
         <p>Explore our featured projects and meet our wonderful team</p>
+        <section class="text-center ">
+            <img src="uploads/geng.jpeg" alt="Our Team" class="team-photo img-fluid rounded shadow">
+        </section>
+        <p>Together with our inspiring lecturer, Madam Hidayah</p>
+        <p>the guiding light behind ReTech. A team fueled by passion, collaboration, and purpose✨</p>
     </header>
 
-    <section class="text-center bg-white py-4">
-        <img src="uploads/geng.jpeg" alt="Our Team" class="team-photo img-fluid rounded shadow">
-    </section>
 
 
     <div class="container py-5">

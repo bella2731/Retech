@@ -119,17 +119,6 @@ if ($report['status'] !== 'Completed') {
         <div class="col-md-6"><span class="label">Submitted On:</span> <?= date('d M Y', strtotime($report['report_date'])) ?></div>
     </div>
 
-    <?php if ($report['evidence'] && file_exists($report['evidence'])): ?>
-        <div class="evidence-box">
-            <strong>Evidence:</strong><br>
-            <?php if (str_ends_with(strtolower($report['evidence']), '.mp4')): ?>
-                <video src="<?= $report['evidence'] ?>" controls width="300" style="border:1px solid #aaa; border-radius:6px;"></video>
-            <?php else: ?>
-                <img src="<?= $report['evidence'] ?>" width="300" style="border:1px solid #aaa; border-radius:6px;">
-            <?php endif; ?>
-        </div>
-    <?php endif; ?>
-
     <div class="signature-box mt-5">
         <p>Prepared by:</p>
         <div class="signature-line"></div>

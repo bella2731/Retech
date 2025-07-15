@@ -78,6 +78,6 @@ if (!empty($_FILES['evidence']['name'])) {
 }
 
 // 5. REDIRECT
-header("Location: dashboard_staff.php");
+header("Location: detailsReport_staff.php");
 exit;
 ?>

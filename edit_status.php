@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body class="bg-light">
     <div class="container py-5">
         <?php
-        $backPage = ($_SESSION['role'] === 'admin') ? 'view_reports.php.php' : 'detailsReport_staff.php';
+        $backPage = ($_SESSION['role'] === 'admin') ? 'view_reports.php' : 'detailsReport_staff.php';
         ?>
         <a href="<?= $backPage ?>" class="btn btn-secondary mb-4">&larr; Back</a>
 

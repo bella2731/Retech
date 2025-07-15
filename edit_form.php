@@ -87,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $log->execute();
 
         // ✅ Redirect back
-        $back = ($role === 'admin') ? 'dashboardadmin.php' : 'dashboard_staff.php';
+        $back = ($role === 'admin') ? 'dashboardadmin.php' : 'detailsReport_staff.php';
         header("Location: {$back}?updated=1");
         exit;
     }

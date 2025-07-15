@@ -36,65 +36,76 @@ $logs_result = $logs_stmt->get_result();
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Status History - Report #<?= $report_id ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+
 <body class="bg-light">
 
-<div class="container py-5">
-    <a href="<?= ($role === 'admin') ? 'view_reports.php' : 'dashboard_staff.php' ?>" class="btn btn-secondary mb-4">&larr; Back to Dashboard</a>
+    <div class="container py-5">
+        <a href="<?= ($role === 'admin') ? 'view_reports.php' : 'detailsReport_staff.php' ?>"
+            class="btn btn-secondary mb-4">&larr; Back</a>
 
-    <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-            <h4 class="mb-0">🕒 Status History for Report #<?= $report_id ?></h4>
-        </div>
-        <div class="card-body">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">🕒 Status History for Report #<?= $report_id ?></h4>
+            </div>
+            <div class="card-body">
 
-            <h5 class="text-secondary">📝 Report Information</h5>
-            <ul class="list-group mb-4">
-                <li class="list-group-item"><strong>Title:</strong> <?= htmlspecialchars($report['title']) ?></li>
-                <li class="list-group-item"><strong>Description:</strong> <?= nl2br(htmlspecialchars($report['description'])) ?></li>
-                <li class="list-group-item"><strong>Current Status:</strong> <?= htmlspecialchars($report['status']) ?></li>
-                <li class="list-group-item"><strong>Created At:</strong> <?= date("d M Y, h:i A", strtotime($report['report_date'])) ?></li>
-            </ul>
+                <h5 class="text-secondary">📝 Report Information</h5>
+                <ul class="list-group mb-4">
+                    <li class="list-group-item"><strong>Title:</strong> <?= htmlspecialchars($report['title']) ?></li>
+                    <li class="list-group-item"><strong>Description:</strong>
+                        <?= nl2br(htmlspecialchars($report['description'])) ?></li>
+                    <li class="list-group-item"><strong>Current Status:</strong>
+                        <?= htmlspecialchars($report['status']) ?></li>
+                    <li class="list-group-item"><strong>Created At:</strong>
+                        <?= date("d M Y, h:i A", strtotime($report['report_date'])) ?></li>
+                </ul>
 
-            <h5 class="text-secondary">📜 Status Logs</h5>
-            <?php if ($logs_result->num_rows > 0): ?>
-                <div class="table-responsive">
-                    <table class="table table-bordered table-striped">
-                        <thead class="table-light">
-                            <tr>
-                                <th>#</th>
-                                <th>Status Details</th>
-                                <th>Timestamp</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php $i = 1; while ($log = $logs_result->fetch_assoc()): ?>
+                <h5 class="text-secondary">📜 Status Logs</h5>
+                <?php if ($logs_result->num_rows > 0): ?>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead class="table-light">
                                 <tr>
-                                    <td><?= $i++ ?></td>
-                                    <td><?= htmlspecialchars($log['status_details']) ?></td>
-                                    <td><?= date("d M Y, h:i A", strtotime($log['created_at'])) ?></td>
+                                    <th>#</th>
+                                    <th>Status Details</th>
+                                    <th>Timestamp</th>
                                 </tr>
-                            <?php endwhile; ?>
-                        </tbody>
-                    </table>
-                </div>
+                            </thead>
+                            <tbody>
+                                <?php $i = 1;
+                                while ($log = $logs_result->fetch_assoc()): ?>
+                                    <?php if (trim($log['status_details']) !== ''): ?>
+                                        <tr>
+                                            <td><?= $i++ ?></td>
+                                            <td><?= htmlspecialchars($log['status_details']) ?></td>
+                                            <td><?= date("d M Y, h:i A", strtotime($log['created_at'])) ?></td>
+                                        </tr>
+                                    <?php endif; ?>
+                                <?php endwhile; ?>
 
-                <?php if ($role === 'admin'): ?>
-                    <a href="view_reports.php" class="btn btn-primary mt-3">📜 View All Reports</a>
-                <?php elseif ($role === 'staff'): ?>
-                    <a href="report_form.php" class="btn btn-primary mt-3">📋 Upload New Report</a>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <?php if ($role === 'admin'): ?>
+                        <a href="view_reports.php" class="btn btn-primary mt-3">📜 View All Reports</a>
+                    <?php elseif ($role === 'staff'): ?>
+                        <a href="report_form.php" class="btn btn-primary mt-3">📋 Upload New Report</a>
+                    <?php endif; ?>
+
+                <?php else: ?>
+                    <div class="alert alert-warning">⚠️ No log entries found for this report.</div>
                 <?php endif; ?>
-
-            <?php else: ?>
-                <div class="alert alert-warning">⚠️ No log entries found for this report.</div>
-            <?php endif; ?>
+            </div>
         </div>
     </div>
-</div>
 
 </body>
+
 </html>

@@ -29,6 +29,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['report_id'])) {
         $delMedia->bind_param("i", $report_id);
         $delMedia->execute();
 
+        // ✅ Delete related logs
+        $delLogs = $conn->prepare("DELETE FROM logs WHERE report_id = ?");
+        if (!$delLogs) {
+            die("Prepare failed (logs): " . $conn->error); 
+        }
+        $delLogs->bind_param("i", $report_id);
+        $delLogs->execute();
+
         // ✅ Delete the report
         $delReport = $conn->prepare("DELETE FROM reports WHERE report_id = ?");
         if (!$delReport) {
