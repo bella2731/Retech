@@ -166,14 +166,18 @@ $result = $stmt->get_result();
                   <?php endif; ?>
                 </td>
                 <td>
-                  <?php if ($row['status'] === 'Completed'): ?>
-                    <a href="print_report.php?id=<?= $row['report_id'] ?>" class="btn btn-sm btn-success" target="_blank">🖨️
-                      Print</a>
-                  <?php endif; ?>
+                  <a href="edit_form.php?id=<?= $row['report_id'] ?>" class="btn btn-sm btn-primary">✏️ Edit</a>
+                  <a href="edit_status.php?id=<?= $row['report_id'] ?>" class="btn btn-sm btn-warning">🛠️ Update</a>
+        
                   <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal"
                     data-report-id="<?= $row['report_id'] ?>">
                     🗑️ Delete
                   </button>
+
+                  <?php if ($row['status'] === 'Completed'): ?>
+                    <a href="print_report.php?id=<?= $row['report_id'] ?>" class="btn btn-sm btn-success" target="_blank">🖨️
+                      Print</a>
+                  <?php endif; ?>
                 </td>
               </tr>
             <?php endwhile; ?>

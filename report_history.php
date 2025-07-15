@@ -2,38 +2,38 @@
 session_start();
 require 'db.php';
 
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'staff') {
+// ✅ Check if logged in and role is staff or admin
+if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin', 'staff'])) {
     header("Location: login.php");
     exit;
 }
 
 $user_id = $_SESSION['user_id'];
-$username = $_SESSION['username'] ?? 'Staff';
-$role = $_SESSION['role']; // ✅ Add this line
+$username = $_SESSION['username'] ?? 'User';
+$role = $_SESSION['role']; // ✅ Capture role
 
-// 1. Get report ID from URL
+// ✅ Get report ID from URL
 $report_id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 if (!$report_id) {
-    die('Invalid report ID');
+    die('❌ Invalid report ID.');
 }
 
-// 2. Check if report belongs to logged-in staff
-$stmt = $conn->prepare("SELECT * FROM REPORTS WHERE report_id = ? AND user_id = ?");
-$stmt->bind_param("ii", $report_id, $user_id);
+// ✅ Fetch the report (allow all staff/admin)
+$stmt = $conn->prepare("SELECT * FROM REPORTS WHERE report_id = ?");
+$stmt->bind_param("i", $report_id);
 $stmt->execute();
 $report = $stmt->get_result()->fetch_assoc();
 
 if (!$report) {
-    die("Report not found or not authorized.");
+    die("❌ Report not found.");
 }
 
-// 3. Fetch related logs
+// ✅ Fetch logs for the report
 $logs_stmt = $conn->prepare("SELECT * FROM LOGS WHERE report_id = ? ORDER BY created_at ASC");
 $logs_stmt->bind_param("i", $report_id);
 $logs_stmt->execute();
 $logs_result = $logs_stmt->get_result();
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -44,7 +44,7 @@ $logs_result = $logs_stmt->get_result();
 <body class="bg-light">
 
 <div class="container py-5">
-    <a href="dashboard_staff.php" class="btn btn-secondary mb-4">&larr; Back to Dashboard</a>
+    <a href="<?= ($role === 'admin') ? 'view_reports.php' : 'dashboard_staff.php' ?>" class="btn btn-secondary mb-4">&larr; Back to Dashboard</a>
 
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
@@ -83,17 +83,15 @@ $logs_result = $logs_stmt->get_result();
                     </table>
                 </div>
 
-<?php if ($role === 'admin'): ?>
-                <!-- If the user is an admin, show the Report History link -->
-                <a href="view_reports.php" class="btn btn-primary mb-4">📜 View Report History</a>
-            <?php elseif ($role === 'staff'): ?>
-                <!-- If the user is staff, show the Upload Report Form link -->
-                <a href="report_form.php" class="btn btn-primary mb-4">📋 Upload Report Form</a>
-            <?php endif; ?>
-            <?php else: ?>
-                <div class="alert alert-warning">No log entries found for this report.</div>
-            <?php endif; ?>
+                <?php if ($role === 'admin'): ?>
+                    <a href="view_reports.php" class="btn btn-primary mt-3">📜 View All Reports</a>
+                <?php elseif ($role === 'staff'): ?>
+                    <a href="report_form.php" class="btn btn-primary mt-3">📋 Upload New Report</a>
+                <?php endif; ?>
 
+            <?php else: ?>
+                <div class="alert alert-warning">⚠️ No log entries found for this report.</div>
+            <?php endif; ?>
         </div>
     </div>
 </div>
