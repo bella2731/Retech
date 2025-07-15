@@ -1,8 +1,8 @@
 <?php
 $servername = "localhost";
-$username = "Querty";      
-$password = "12345!";          
-$dbname = "report"; 
+$username = "";      
+$password = "";          
+$dbname = "retech"; 
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
